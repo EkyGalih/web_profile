@@ -22,6 +22,7 @@ def index():
         print(e)
         return response.badRequest(str(e), "Failed")
 
+## get single data
 def detail(id):
     try:
         dosen = Dosen.query.filter_by(id=id).first()
@@ -44,7 +45,71 @@ def detail(id):
     except Exception as e:
         print(e)
         return response.badRequest(str(e), "Failed")
+    
+## save new record
+def save():
+    try:
+        nidn = request.form.get('nidn')
+        nama = request.form.get('nama')
+        phone = request.form.get('phone')
+        alamat = request.form.get('alamat')
 
+        dosens = Dosen(nidn=nidn, nama=nama, phone=phone, alamat=alamat)
+        db.session.add(dosens)
+        db.session.commit()
+        
+        return response.success('', 'Data Dosen Ditambahkan')
+    except Exception as e:
+        print(e)
+        return response.badRequest(str(e), "error")
+
+## update data
+def ubah(id):
+    try:
+        nidn = request.form.get('nidn')
+        nama = request.form.get('nama')
+        phone = request.form.get('phone')
+        alamat = request.form.get('alamat')
+
+        input = [
+            {
+                'nidn': nidn,
+                'nama': nama,
+                'phone': phone,
+                'alamat': alamat
+            }
+        ]
+        
+        dosen = Dosen.query.filter_by(id=id).first()
+        
+        dosen.nidn = nidn
+        dosen.nama = nama
+        dosen.phone = phone
+        dosen.alamat = alamat
+        
+        db.session.commit()
+        
+        return response.success('', "Data dosen berhasil diupdate")
+    except Exception as e:
+        print(e)
+        return response.badRequest(str(e), "Failed")
+    
+## hapus data
+def hapus(id):
+    try:
+        dosen = Dosen.query.filter_by(id=id).first()
+        if not dosen:
+            return response.badRequest([], "Data dosen tidak ditemukan")
+
+        db.session.delete(dosen)
+        db.session.commit()
+
+        return response.success("", "Data dosen berhasil dihapus")
+    except Exception as e:
+        print(e)
+        return response.badRequest(str(e), "Terjadi kesalahan saat hapus data dosen")
+
+## fungsi tambahan untuk format data
 def SingleDetailMahasiswa(dosen, mahasiswa):
     data = {
         'id' : dosen.id,

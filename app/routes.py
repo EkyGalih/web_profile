@@ -1,4 +1,5 @@
 from app import app
+from flask import request
 from app.controller import DosenController
 
 
@@ -6,10 +7,18 @@ from app.controller import DosenController
 def index():
     return 'Hello Flask App'
 
-@app.route('/dosen', methods=['GET'])
+@app.route('/dosen', methods=['GET', 'POST'])
 def dosens():
-    return DosenController.index()
+    if request.method  == 'GET':
+        return DosenController.index()
+    else:
+        return DosenController.save()
 
-@app.route('/dosen/<id>', methods=['GET'])
+@app.route('/dosen/<id>', methods=['GET', 'PUT', 'DELETE'])
 def dosenDetail(id):
-    return DosenController.detail(id)
+    if request.method == 'GET':
+        return DosenController.detail(id)
+    elif request.method == 'PUT':
+        return DosenController.ubah(id)
+    elif request.method == 'DELETE':
+        return DosenController.hapus(id)
